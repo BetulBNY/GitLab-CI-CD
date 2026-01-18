@@ -1,35 +1,14 @@
-# 1) RETRYING FAILED JOBS AUTOMATICALLY:
-# Yani bu kısım aslında rastgele bir test simülasyonu ve başarısız olduğunda otomatik retry denemesi yapıyor.
+job_1:
+ image: alpine
+ before_script: 
+  - echo "Installing dependencies"
+ script:
+   - echo "Job 1"
 
-build_job:
-  image: alpine
-  stage: build
-  script:
-    - echo "Building..."
 
-test_job:
-  image: ubuntu
-  stage: test
-  script:
-    - echo "Testing..."
-    # Rastgele bir sayı üretiyoruz ve bu sayı çiftse testi başarısız sayıyoruz  
-    # RANDOM 0-32767 arasında rastgele bir sayı üretir
-    - if ((RANDOM %2 == 0)); then exit 1; else exit 0; fi  
-  retry: 2   # Eğer job başarısız olursa GitLab job'u 2 kere daha deneyecek 
-  # Bu, özellikle testlerde geçici hatalar olabileceği durumlarda işe yarar.
-
-# 2) ALLOW FAILURE
-# Bu kısım GitLab CI/CD’de job’un başarısız olmasını hangi durumlarda “normal kabul edeceğimizi” kontrol etmek için kullanılıyor.
-# Allof failure to control when a job is actually allowed to fail or not
-
-# Normalde job exit kodu 0 değilse job fail olarak kabul edilir.
-# Ama allow_failure: true yazarsan job fail olsa bile pipeline devam eder, “warning” olarak gözükür.
-some_job:
-  image: ubuntu
-  stage: test
-  script:
-    - if ((RANDOM %2 == 0)); then exit 123; else exit 1; fi  
-  # allow_failure: true 
-  allow_failure: # you want to allow failure for only specific lsit of exit codes  
-    exit_codes:
-      - 123 
+job_2:
+ image: alpine
+ before_script:
+   - echo "Installing dependencies" 
+ script:
+   - echo "Job 2"
