@@ -1,4 +1,5 @@
-# DRY Principle: Do not repeat yourself!
+# extends, GitLab CI’de job’lar arasında inheritance sağlar ve büyük pipeline’ların olmazsa olmazıdır.
+# Extends özelliği sadece Gitlab'da var. Anchor ise sadec YAML özelliği.
 stages:
   - build
   - deploy_staging
@@ -13,26 +14,30 @@ build_file:
     paths:
       - build.txt
 
-.deploy_template: &deploy_template
-  image: alpine
-  stage: deploy_staging
-  environment:
-    name: staging
-  variables: &deploy_variables
-    APP_VERSION: $CI_PIPELINE_IID
-    DB_NAME: "staging-db"
+.deploy_script:
   script:
-    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."      
-    - if [[ "$CI_ENVIRONMENT_NAME" == "production"]]; then echo "This should run ONLY on prod."; fi
+  - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."
+  - echo "This should run ONLY on prod."
 
-mock_deploy_prod_new:
-  <<: *deploy_template    
+.deploy_template:
+  image: alpine
   stage: deploy_prod
   environment:
     name: production
   variables:
-    <<: *deploy_variables
+    APP_VERSION: $CI_PIPELINE_IID
     DB_NAME: "prod-db"
+
+
+mock_deploy_staging_new:
+  extends: 
+   - .deploy_template
+   - .deploy_script
+  stage: deploy_staging
+  environment:
+    name: staging
+  variables:
+    DB_NAME: "staging-db"
 
 mock_deploy_staging:
   image: alpine
