@@ -1,31 +1,58 @@
-.dependencies: &dependencies
-    - echo "Installing dependencies"
+# DRY Principle: Do not repeat yourself!
+stages:
+  - build
+  - deploy_staging
+  - deploy_prod
 
-.job_template: &my_job_template # anchor → tekrar kullanılacak job şablonunu tanımlar
+build_file:
   image: alpine
-  before_script:
-  - echo "Installing dependencies"
-
-job_1_new:
-  <<: *my_job_template # alias → anchor’daki içeriği buraya kopyalar
+  stage: build
   script:
-    - echo "Job 1"  
+    - echo "Hello" > build.txt
+  artifacts:
+    paths:
+      - build.txt
 
-job_2_new:
-  <<: *my_job_template 
+.deploy_template: &deploy_template
+  image: alpine
+  stage: deploy_staging
+  environment:
+    name: staging
+  variables: &deploy_variables
+    APP_VERSION: $CI_PIPELINE_IID
+    DB_NAME: "staging-db"
   script:
-    - echo "Job 2"
+    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."      
+    - if [[ "$CI_ENVIRONMENT_NAME" == "production"]]; then echo "This should run ONLY on prod."; fi
 
-job_1:
- image: alpine
- before_script: *dependencies
- script:
-   - echo "Job 1"
+mock_deploy_prod_new:
+  <<: *deploy_template    
+  stage: deploy_prod
+  environment:
+    name: production
+  variables:
+    <<: *deploy_variables
+    DB_NAME: "prod-db"
 
+mock_deploy_staging:
+  image: alpine
+  stage: deploy_staging
+  environment:
+    name: staging
+  variables:
+    APP_VERSION: $CI_PIPELINE_IID
+    DB_NAME: "staging-db"
+  script:
+    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."
 
-job_2:
- image: alpine
- before_script:
-   - echo "Installing dependencies" 
- script:
-   - echo "Job 2"
+mock_deploy_prod:
+  image: alpine
+  stage: deploy_prod
+  environment:
+    name: production
+  variables:
+    APP_VERSION: $CI_PIPELINE_IID
+    DB_NAME: "prod-db"
+  script:
+    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."
+    - echo "This should run ONLY on prod."
