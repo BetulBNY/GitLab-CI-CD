@@ -1,0 +1,14 @@
+job_1:
+ image: alpine
+ before_script: 
+  - echo "Installing dependencies"
+ script:
+   - echo "Job 1"
+
+
+job_2:
+ image: alpine
+ before_script:
+   - echo "Installing dependencies" 
+ script:
+   - echo "Job 2"
