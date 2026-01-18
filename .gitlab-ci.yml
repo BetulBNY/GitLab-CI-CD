@@ -1,3 +1,4 @@
+# 3) ANCHORS & ALIASES
 .dependencies: &dependencies
     - echo "Installing dependencies"
 
