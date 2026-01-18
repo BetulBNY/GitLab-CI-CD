@@ -1,3 +1,4 @@
+# 4) EXTEND IN GITLAB CI
 # extends, GitLab CI’de job’lar arasında inheritance sağlar ve büyük pipeline’ların olmazsa olmazıdır.
 # Extends özelliği sadece Gitlab'da var. Anchor ise sadec YAML özelliği.
 stages:
