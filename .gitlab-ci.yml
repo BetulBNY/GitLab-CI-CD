@@ -5,10 +5,10 @@ stages:
 
 include: 
   - local: 'ci/build.yml'
-  #- remote: 'https://gitlab.com/betulbny-projects/car-assembly/-/raw/main/.deplot-template.yml' # project must be public
-  - project: 'betulbny-projects/car-assembly'
-    ref: main
-    file: '.deplot-template.yml' # This config is ideal for including files from another private project
+  - remote: 'https://gitlab.com/betulbny-projects/car-assembly/-/raw/main/.deplot-template.yml' # project must be public
+ # - project: 'betulbny-projects/car-assembly'
+  #  ref: main
+  #  file: '.deplot-template.yml' # This config is ideal for including files from another private project
 
 
 mock_deploy_staging_new:
