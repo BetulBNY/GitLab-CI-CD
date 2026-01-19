@@ -12,7 +12,7 @@ include:
 
 
 mock_deploy_staging_new:
-  extends: .deplot_template
+  extends: .deploy_template
   stage: deploy_staging
   environment:
     name: staging
