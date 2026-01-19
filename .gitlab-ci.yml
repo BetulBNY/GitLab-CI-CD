@@ -4,7 +4,7 @@ stages:
   - deploy_prod
 
 include: 
-  - local: 'ci\build.yml'
+  - local: '\devops-gitlab-features\ci\build.yml'
   - remote: 'https://gitlab.com/betulbny-projects/car-assembly/-/raw/main/.deplot-template.yml' # project must be public
   - project: 'betulbny-projects/car-assembly'
  # - file: 
