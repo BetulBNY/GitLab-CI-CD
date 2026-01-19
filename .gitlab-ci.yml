@@ -1,43 +1,22 @@
-stages:
-  - build
-  - deploy_staging
-  - deploy_prod
 
-include: 
-  - local: 'ci/build.yml'
-  - remote: 'https://gitlab.com/betulbny-projects/car-assembly/-/raw/main/.deplot-template.yml' # project must be public
- # - project: 'betulbny-projects/car-assembly'
-  #  ref: main
-  #  file: '.deplot-template.yml' # This config is ideal for including files from another private project
+   #component: $CI_SERVER_FQDN/components/code-quality/code-quality@1.0.4
 
+include:
+  - component: gitlab.com/components/code-quality/code-quality@<VERSION>
+    inputs:
+      stage: build
 
-mock_deploy_staging_new:
-  extends: .deploy_template
-  stage: deploy_staging
-  environment:
-    name: staging
-  variables:
-    DB_NAME: "staging-db"  
-
-mock_deploy_staging:
+build_car:
   image: alpine
-  stage: deploy_staging
-  environment:
-    name: staging
-  variables:
-    APP_VERSION: $CI_PIPELINE_IID
-    DB_NAME: "staging-db"
+  stage: build
   script:
-    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."
+    - echo "My car" > car.txt
+  artifacts:
+    paths:
+      - car.txt
 
-mock_deploy_prod:
+test_car:
   image: alpine
-  stage: deploy_prod
-  environment:
-    name: production
-  variables:
-    APP_VERSION: $CI_PIPELINE_IID
-    DB_NAME: "prod-db"
+  stage: test
   script:
-    - echo "Deploying app version $APP_VERSION on $CI_ENVIRONMENT_NAME ..."
-    - echo "This should run ONLY on prod."
+    - test -f car.txt
