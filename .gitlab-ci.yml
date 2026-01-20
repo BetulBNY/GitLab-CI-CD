@@ -2,7 +2,7 @@
    #component: $CI_SERVER_FQDN/components/code-quality/code-quality@1.0.4
 
 include:
-  - component: gitlab.com/components/code-quality/code-quality@<VERSION>
+  - component: gitlab.com/components/code-quality/code-quality@1.0.5
     inputs:
       stage: build
 
