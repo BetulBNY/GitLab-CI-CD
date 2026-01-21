@@ -1,37 +1,24 @@
-# OpenAI platform Documentation URL: https://platform.openai.com/docs/quickstart?api-mode=chat&lang=curl&input-type=image-url
-
-# If you have multi line commands in scripts, YAML wouldn't understand it. For fix it, use built in function that is 
-# multi-line stream feature. For solving it we just use pipe "|"
-api_call_job:
+build_website:
+  stage: build
   image: alpine
-  allow_failure: true # OpenAI API KEY yokken job fail etmesin ama pipeline devam etsin. External API’ye bağlı job’ları allow_failure ile opsiyonel hale getiriyorum, pipeline stability bozulmuyor.
-  variables:
-    OPENAI_API_KEY: ""
+  script:
+    - mkdir build
+    - echo "<h1>My website</h1>" > build/index.html
+  artifacts:
+    paths:
+      - build/
+
+
+test_website:
+  stage: test
+  image: node:22-alpine
   before_script:
     - apk add curl
+    - npm install -g serve # serve will start a web server from some local files.
   script:
-    - echo "Calling the OpenAI API ..."
-    - chmod +x script.sh  # script.sh dosyasına execute (çalıştırma) izni verir
-    - ./script.sh
-    - |
-      curl "https://api.openai.com/v1/responses" \
-      -H "Content-Type: application/json" \
-      -H "Authorization: Bearer $OPENAI_API_KEY" \
-      -d '{
-          "model": "gpt-5",
-          "input": [
-              {
-                  "role": "user",
-                  "content": [
-                      {
-                          "type": "input_text",
-                          "text": "What is in this image?"
-                      },
-                      {
-                          "type": "input_image",
-                          "image_url": "https://openai-documentation.vercel.app/images/cat_and_otter.png"
-                      }
-                  ]
-              }
-          ]
-      }'
+    - test -f build/index.html # first check if the file exist.
+    #- serve build/ # Starting a server  # when we started a server it runs infinitely. It is not stopping. So, we should add 
+    - serve build/ &  # tells shall to run that command in the background 
+    # bu sever serve build arkada başladığı için hemen alttaki curl command çalışıyordu. Heme çalışmasın diye bekleme mekanizması ekledik.
+    - sleep 3
+    - curl http://localhost:3000 | grep "My website"
