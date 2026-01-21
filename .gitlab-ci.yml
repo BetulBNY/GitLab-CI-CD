@@ -7,3 +7,5 @@ api-tests:
     - newman run collection.json -r htmlextra --reporter-htmlextra-export ./newman/index.html
   pages:
     publish: newman
+
+# Gitlab Pages Docs: https://docs.gitlab.com/user/project/pages/    
