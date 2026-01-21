@@ -1,24 +1,9 @@
-build_website:
-  stage: build
-  image: alpine
-  script:
-    - mkdir build
-    - echo "<h1>My website</h1>" > build/index.html
-  artifacts:
-    paths:
-      - build/
-
-
-test_website:
-  stage: test
+api-tests:
   image: node:22-alpine
+  stage: test
   before_script:
-    - apk add curl
-    - npm install -g serve # serve will start a web server from some local files.
+    - npm install -g newman newman-reporter-htmlextra
   script:
-    - test -f build/index.html # first check if the file exist.
-    #- serve build/ # Starting a server  # when we started a server it runs infinitely. It is not stopping. So, we should add 
-    - serve build/ &  # tells shall to run that command in the background 
-    # bu sever serve build arkada başladığı için hemen alttaki curl command çalışıyordu. Heme çalışmasın diye bekleme mekanizması ekledik.
-    - sleep 3
-    - curl http://localhost:3000 | grep "My website"
+    - newman run collection.json -r htmlextra --reporter-htmlextra-export ./newman/index.html
+  pages:
+    publish: newman
