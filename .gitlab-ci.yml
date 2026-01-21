@@ -4,6 +4,7 @@
 # multi-line stream feature. For solving it we just use pipe "|"
 api_call_job:
   image: alpine
+  allow_failure: true # OpenAI API KEY yokken job fail etmesin ama pipeline devam etsin. External API’ye bağlı job’ları allow_failure ile opsiyonel hale getiriyorum, pipeline stability bozulmuyor.
   variables:
     OPENAI_API_KEY: ""
   before_script:
