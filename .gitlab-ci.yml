@@ -1,12 +1,10 @@
-api-tests:
-  image: node:22-alpine
-  stage: test
-  before_script:
-    - npm install -g newman newman-reporter-htmlextra # Newman: Postman collection çalıştırır # htmlextra: HTML test raporu üretir
+test_arm64:
+  image: arm64v8/ubuntu:latest
+  tags:
+    - saas-linux-small-arm64
   script:
-    - newman run collection.json -r htmlextra --reporter-htmlextra-export ./newman/index.html # collection.json → Postman collection dosyası # -r htmlextra → HTML raporlayıcı kullan # Raporu ./newman/index.html olarak üret
-  pages:
-    publish: newman # GitLab Pages'e yayınlanacak klasör # ./newman klasörü public site olur
+    - echo "Running on arm64 architecture"
+    - uname -m
 
-# Gitlab Pages Docs: https://docs.gitlab.com/user/project/pages/    
-# Automated API testing using Newman and published HTML test reports via GitLab Pages.
+# Gitlab Runner Tags: https://docs.gitlab.com/ci/yaml/#tags
+# Gitlab Hosted Runners: https://docs.gitlab.com/ci/runners/hosted_runners/linux/    
