@@ -1,10 +1,51 @@
-test_arm64:
-  image: arm64v8/ubuntu:latest
-  tags:
-    - saas-linux-small-arm64
-  script:
-    - echo "Running on arm64 architecture"
-    - uname -m
+# Dependencies: If we don't specify dependency config by default, the jobs will always going to download all artifacts from all previous stages. 
+default:
+  image: alpine
 
-# Gitlab Runner Tags: https://docs.gitlab.com/ci/yaml/#tags
-# Gitlab Hosted Runners: https://docs.gitlab.com/ci/runners/hosted_runners/linux/    
+stages:
+  - build
+  - test
+  - deploy
+
+build_app:
+  stage: build
+  script:
+    - echo "Building the application ..."
+    - dd if=/dev/zero of=myapp bs=1M count=100
+  artifacts:
+    paths:
+      - myapp
+
+release_notes:
+  stage: build
+  script:
+    - echo "Creating the release notes"
+    - echo "RELEASE NOTES" > release-notes.txt
+  artifacts:
+    paths:
+      - release-notes.txt
+
+test_app:
+  stage: test
+  script:
+    - echo "Testing the app"
+    - test -f myapp
+
+test_release_notes:
+  stage: test
+  dependencies:
+    - release_notes
+  script:
+    - echo "Testing the release notes"
+    - test -f release-notes.txt
+  
+unit_tests: 
+  stage: test
+  dependencies : []   # Means, this job has no any dependencies, no need artifacts for run. So unnecessarily don't spend time on download artifacts.
+  script:
+    - echo "Running the unit tests"
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to production"
