@@ -1,4 +1,3 @@
-# Dependencies: If we don't specify dependency config by default, the jobs will always going to download all artifacts from all previous stages. 
 default:
   image: alpine
 
@@ -10,42 +9,42 @@ stages:
 build_app:
   stage: build
   script:
-    - echo "Building the application ..."
-    - dd if=/dev/zero of=myapp bs=1M count=100
-  artifacts:
-    paths:
-      - myapp
+    - echo "Building the application"
 
 release_notes:
   stage: build
   script:
     - echo "Creating the release notes"
-    - echo "RELEASE NOTES" > release-notes.txt
-  artifacts:
-    paths:
-      - release-notes.txt
+    - sleep 30
 
 test_app:
   stage: test
   script:
     - echo "Testing the app"
-    - test -f myapp
+  needs:
+    - build_app  # This job can only start after build_app job completed. It doesn't have to wait for completion of release_notes job.
 
-test_release_notes:
+test_stuff:
   stage: test
-  dependencies:
-    - release_notes
   script:
-    - echo "Testing the release notes"
-    - test -f release-notes.txt
-  
-unit_tests: 
+    - echo "Testing the the app and the release notes"  
+
+unit_tests:
   stage: test
-  dependencies : []   # Means, this job has no any dependencies, no need artifacts for run. So unnecessarily don't spend time on download artifacts.
   script:
     - echo "Running the unit tests"
+  needs: [] # It doesn't need any dependencies. So it don't have to wait for any job during pipelinen execution. 
+
+
+linter:
+  stage: test
+  script:
+    - echo "Running the linter"
 
 deploy:
   stage: deploy
   script:
     - echo "Deploying to production"
+  needs:
+    - test_app
+    - unit_tests  
