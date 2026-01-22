@@ -1,3 +1,4 @@
+# Needs keyword used. This approach improves pipeline efficiency by starting jobs as soon as their dependencies are met.
 default:
   image: alpine
 
